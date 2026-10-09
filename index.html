@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>售後智能診斷與保養服務</title>
+  <style>
+    :root {
+      --primary: #28a745;
+      --primary-hover: #218838;
+      --primary-light: #e8f5e9;
+      --bg-color: #f7f9f7;
+      --card-bg: #ffffff;
+      --text-main: #343a40;
+      --text-sub: #6c757d;
+      --border-color: #e2e8f0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: "微軟正黑體", "Microsoft JhengHei", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 16px 12px 36px;
+      line-height: 1.5;
+    }
+    .container { max-width: 480px; margin: 0 auto; position: relative; }
+    .header-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      border-top: 4px solid var(--primary);
+      margin-bottom: 16px;
+    }
+    .header-card h2 { margin: 0 0 4px 0; font-size: 18px; }
+    .header-card p { margin: 0; font-size: 12px; color: var(--text-sub); }
+    
+    .form-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 18px 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-color);
+    }
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+    
+    .selected-product-banner {
+      background-color: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--primary-hover);
+      margin-bottom: 16px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+    label .req { color: #dc3545; }
+    select, input[type="file"], input[type="text"], input[type="tel"], textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 13px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: #fafafa;
+      outline: none;
+      box-sizing: border-box;
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .card-option {
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      background: #fafafa;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .card-option.selected {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+      font-weight: bold;
+      color: var(--primary-hover);
+    }
+
+    .tip-box {
+      background-color: #eef6fb;
+      border-left: 4px solid #2b5876;
+      padding: 16px 12px;
+      font-size: 14px;
+      color: #2b5876;
+      border-radius: 6px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      background: #fafafa;
+      border: 1px solid var(--border-color);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .checkbox-item input { margin-right: 8px; accent-color: var(--primary); }
+
+    .img-preview {
+      max-width: 100%;
+      max-height: 160px;
+      margin-top: 8px;
+      border-radius: 6px;
+      display: none;
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+    button, .btn-link {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    button.btn-prev { background-color: #6c757d; }
+    button:disabled { background-color: #c3e6cb; }
+
+    /* 圓圈懸浮聯繫客服按鈕樣態與脈衝動畫 */
+    .floating-contact-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(40, 167, 69, 0.4);
+      cursor: pointer;
+      z-index: 999;
+      animation: pulse 2s infinite;
+      transition: transform 0.2s;
+    }
+    .floating-contact-btn:active { transform: scale(0.92); }
+    .floating-contact-btn span.icon { font-size: 20px; line-height: 1; }
+    .floating-contact-btn span.text { font-size: 10px; margin-top: 2px; font-weight: bold; }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.6); }
+      70% { box-shadow: 0 0 0 14px rgba(40, 167, 69, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+    }
+
+    .result-card {
+      display: none;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      border: 1px solid var(--border-color);
+    }
+    .result-icon { font-size: 48px; margin-bottom: 12px; }
+    .result-card h3 { margin: 0 0 8px 0; color: var(--primary-hover); font-size: 18px; }
+    .result-card p { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 20px; }
+    .line-btn { background-color: #06c755; color: #ffffff; font-size: 15px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-card">
+      <h2>售後智能診斷與保養服務</h2>
+      <p>請依步驟完成選填，客服專員將為您迅速處理售後需求</p>
+    </div>
+
+    <!-- 主要表單區域 -->
+    <div class="form-card" id="formCard">
+      <form id="repairForm">
+        
+        <!-- ================= 第 1 層：基本資料與產品選擇 ================= -->
+        <div class="step-content active" id="step-1">
+          <div class="form-group">
+            <label>您的 LINE 名稱 / 稱呼 <span class="req">*</span></label>
+            <input type="text" id="userName" placeholder="請輸入您的 LINE 暱稱或姓名">
+          </div>
+          <div class="form-group">
+            <label>聯絡電話 <span class="req">*</span></label>
+            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話 (例: 0912345678)">
+          </div>
+          <div class="form-group">
+            <label>請選擇您購買的產品 <span class="req">*</span></label>
+            <select id="product">
+              <option value="" disabled selected>請選擇產品名稱</option>
+              <option value="洗衣粉放置架">洗衣粉放置架</option>
+              <option value="廚房衛浴置物架">廚房衛浴置物架</option>
+              <option value="中型多用途置物架">中型多用途置物架</option>
+              <option value="廚衛瓶罐置物架">廚衛瓶罐置物架</option>
+              <option value="扇型角落架">扇型角落架</option>
+              <option value="保鮮膜廚房紙巾置物架">保鮮膜廚房紙巾置物架</option>
+              <option value="雙層鍋蓋架">雙層鍋蓋架</option>
+              <option value="雙掛毛巾架">雙掛毛巾架</option>
+              <option value="面紙衛生紙置物架">面紙衛生紙置物架</option>
+              <option value="料理刀砧板鍋蓋架">料理刀砧板鍋蓋架</option>
+              <option value="資源回收垃圾袋架">資源回收垃圾袋架</option>
+              <option value="迷你鍋蓋砧板架">迷你鍋蓋砧板架</option>
+              <option value="廚房紙巾壁掛架">廚房紙巾壁掛架</option>
+              <option value="菜瓜布水槽放置架">菜瓜布水槽放置架</option>
+              <option value="廚房抹布放置架">廚房抹布放置架</option>
+              <option value="砧板吊掛架">砧板吊掛架</option>
+              <option value="單桿毛巾架">單桿毛巾架</option>
+              <option value="牙刷牙膏漱口杯壁掛架">牙刷牙膏漱口杯壁掛架</option>
+              <option value="盥洗用具壁掛架">盥洗用具壁掛架</option>
+              <option value="捲筒衛生紙架">捲筒衛生紙架</option>
+              <option value="香皂架">香皂架</option>
+              <option value="吹風機壁掛架">吹風機壁掛架</option>
+              <option value="單瓶沐浴乳架">單瓶沐浴乳架</option>
+              <option value="蓮蓬頭壁掛架">蓮蓬頭壁掛架</option>
+              <option value="雙桿毛巾架">雙桿毛巾架</option>
+              <option value="掃把拖把雨傘放置夾">掃把拖把雨傘放置夾</option>
+              <option value="居家多功能掛勾(小)">居家多功能掛勾(小)</option>
+              <option value="5勾 (小五勾)">5勾 (小五勾)</option>
+              <option value="居家多功能掛勾(大)">居家多功能掛勾(大)</option>
+              <option value="5勾 (大五勾)">5勾 (大五勾)</option>
+              <option value="E型單支雙勾">E型單支雙勾</option>
+              <option value="E型3支6勾">E型3支6勾</option>
+              <option value="S型單支雙勾">S型單支雙勾</option>
+              <option value="S型3支6勾">S型3支6勾</option>
+              <option value="蝴蝶單支三勾">蝴蝶單支三勾</option>
+              <option value="蝴蝶2支6勾">蝴蝶2支6勾</option>
+              <option value="紅酒香檳杯壁掛">紅酒香檳杯壁掛</option>
+              <option value="壁掛式碟子盤子收納架">壁掛式碟子盤子收納架</option>
+              <option value="壁掛食用碗收納">壁掛食用碗收納</option>
+              <option value="壁掛玻璃馬克杯">壁掛玻璃馬克杯</option>
+              <option value="不鏽鋼掛勾5S">不鏽鋼掛勾5S</option>
+              <option value="304不鏽鋼鋼片五連掛勾架(U型)">304不鏽鋼鋼片五連掛勾架(U型)</option>
+              <option value="不鏽鋼廚衛鋼片平台置物架">不鏽鋼廚衛鋼片平台置物架</option>
+              <option value="筷子湯匙刀叉壁掛架">筷子湯匙刀叉壁掛架</option>
+              <option value="雙瓶沐浴乳架">雙瓶沐浴乳架</option>
+              <option value="廚房洗潔用品架">廚房洗潔用品架</option>
+              <option value="四方高欄角落架">四方高欄角落架</option>
+              <option value="日式斜放三層架">日式斜放三層架</option>
+              <option value="歐式可調式三層架">歐式可調式三層架</option>
+              <option value="不滴水香皂架">不滴水香皂架</option>
+              <option value="籃子平台單手撕">籃子平台單手撕</option>
+              <option value="大象衣物掛勾架">大象衣物掛勾架</option>
+              <option value="多功能抽取式衛生紙">多功能抽取式衛生紙</option>
+              <option value="泡沫幕斯款沐浴乳架">泡沫幕斯款沐浴乳架</option>
+              <option value="四層鍋蓋架">四層鍋蓋架</option>
+              <option value="伸縮雙桿毛巾架">伸縮雙桿毛巾架</option>
+              <option value="密合彈蓋垃圾袋壁掛架">密合彈蓋垃圾袋壁掛架</option>
+              <option value="430不鏽鋼掃除用具夾(活動式一排3夾)">430不鏽鋼掃除用具夾(活動式一排3夾)</option>
+              <option value="304不鏽鋼鋼片U型掛勾架(6勾)">304不鏽鋼鋼片U型掛勾架(6勾)</option>
+              <option value="304不鏽鋼精緻肥皂盒(集水方盒)">304不鏽鋼精緻肥皂盒(集水方盒)</option>
+              <option value="蓮蓬頭架(5段可調角度)">蓮蓬頭架(5段可調角度)</option>
+              <option value="瀝水掛架配件">瀝水掛架配件</option>
+              <option value="優質鋁合金摺疊衛浴置物架">優質鋁合金摺疊衛浴置物架</option>
+              <option value="其他商品">其他商品</option>
+            </select>
+          </div>
+          <div class="btn-group">
+            <button type="button" onclick="handleStep1Next()">下一步</button>
+          </div>
+        </div>
+
+        <!-- ================= 第 2 層：產品溫馨提示 ================= -->
+        <div class="step-content" id="step-2">
+          <div class="selected-product-banner" id="bannerStep2"></div>
+          
+          <div class="tip-box" id="productTipContent">
+            <!-- 動態注入提示文字 -->
+          </div>
+
+          <p style="text-align: center; color: #888; font-size: 12px; margin-top: 20px;">
+            若上述安裝說明無法排除您的問題，請點擊右下角【聯繫客服】按鈕。
+          </p>
+
+          <div class="btn-group">
+            <button type="button" class="btn-prev" onclick="goToStep(1)">上一步</button>
+          </div>
+        </div>
+
+        <!-- ================= 第 3 層：客服排查表單 ================= -->
+        <div class="step-content" id="step-3">
+          <div class="selected-product-banner" id="bannerStep3"></div>
+
+          <div class="form-group">
+            <label>商品異常情況 <span class="req">*</span></label>
+            <select id="issueType" onchange="toggleIssueDetails()">
+              <option value="" disabled selected>請選擇狀況</option>
+              <option value="膠片掉落">膠片掉落 / 不黏</option>
+              <option value="勾盤掉落 / 斷裂">勾盤掉落 / 斷裂</option>
+              <option value="其他">其他商品問題</option>
+            </select>
+          </div>
+
+          <!-- A. 當選擇【膠片掉落】時動態展開 -->
+          <div id="filmDetailFields" style="display: none;">
+            <div class="form-group">
+              <label>安裝牆面材質 <span class="req">*</span></label>
+              <div class="card-grid">
+                <div class="card-option selected" id="wall-1" onclick="setWall('光滑磁磚/玻璃', 'wall-1')">光滑磁磚 / 玻璃</div>
+                <div class="card-option" id="wall-2" onclick="setWall('粗糙牆面/微凹凸/漆面', 'wall-2')">粗糙面 / 漆面 / 木板</div>
+              </div>
+              <input type="hidden" id="wallType" value="光滑磁磚/玻璃">
+            </div>
+
+            <div class="form-group">
+              <label>是否使用<b>透明輔助膠片</b> <span class="req">*</span></label>
+              <select id="helperSheet" onchange="toggleHelperImage()">
+                <option value="" disabled selected>請選擇</option>
+                <option value="是">是</option>
+                <option value="否">否</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>是否清洗膠片 <span class="req">*</span></label>
+              <select id="isWashed">
+                <option value="" disabled selected>請選擇</option>
+                <option value="是">是</option>
+                <option value="否">否</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>含掛勾的膠片情況（可複選） <span class="req">*</span></label>
+              <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" name="filmCondition" value="背膠感覺不黏"> 背膠感覺不黏</label>
+                <label class="checkbox-item"><input type="checkbox" name="filmCondition" value="外觀有些微摺痕"> 外觀有些微摺痕</label>
+                <label class="checkbox-item"><input type="checkbox" name="filmCondition" value="背膠呈霧霧狀"> 背膠呈霧霧狀</label>
+                <label class="checkbox-item"><input type="checkbox" name="filmCondition" value="看起來完整"> 看起來完整</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>牆面照片（請拿架子比著原本安裝位置） <span class="req">*</span></label>
+              <input type="file" id="wallImg" accept="image/*" onchange="previewImage(this, 'wallPreview')">
+              <img id="wallPreview" class="img-preview">
+            </div>
+
+            <div class="form-group" id="helperSheetImgGroup" style="display: none;">
+              <label>輔助膠片照片 <span class="req">*</span></label>
+              <input type="file" id="helperSheetImg" accept="image/*" onchange="previewImage(this, 'helperSheetPreview')">
+              <img id="helperSheetPreview" class="img-preview">
+            </div>
+
+            <div class="form-group">
+              <label>膠片扣在架子的照片 <span class="req">*</span></label>
+              <input type="file" id="filmImg" accept="image/*" onchange="previewImage(this, 'filmPreview')">
+              <img id="filmPreview" class="img-preview">
+            </div>
+          </div>
+
+          <!-- B. 當選擇【勾盤掉落 / 斷裂】時動態展開 -->
+          <div id="hookDetailFields" style="display: none;">
+            <div class="form-group">
+              <label>勾盤受損或脫落處照片 <span class="req">*</span></label>
+              <input type="file" id="hookImg" accept="image/*" onchange="previewImage(this, 'hookPreview')">
+              <img id="hookPreview" class="img-preview">
+            </div>
+            <div class="form-group">
+              <label>架子扣法與整體照片 <span class="req">*</span></label>
+              <input type="file" id="hookRackImg" accept="image/*" onchange="previewImage(this, 'hookRackPreview')">
+              <img id="hookRackPreview" class="img-preview">
+            </div>
+          </div>
+
+          <!-- 通用必填欄位：收納物品如何放置照片 -->
+          <div class="form-group" id="storageImgGroup" style="display: none;">
+            <label>收納物品如何放置照片 <span class="req">*</span></label>
+            <input type="file" id="storageImg" accept="image/*" onchange="previewImage(this, 'storagePreview')">
+            <img id="storagePreview" class="img-preview">
+          </div>
+
+          <!-- 其他說明 -->
+          <div class="form-group">
+            <label>其他說明</label>
+            <textarea id="issueDesc" placeholder="如有其他使用狀況或需要協助的地方，請在此補充說明..."></textarea>
+          </div>
+
+          <div class="btn-group">
+            <button type="button" class="btn-prev" onclick="handleStep3Prev()">上一步</button>
+            <button type="button" id="submitBtn" onclick="submitForm()">送出申請</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ================= 第 4 層：已送出申請 ================= -->
+    <div class="result-card" id="resultCard">
+      <div class="result-icon">✅</div>
+      <h3>已送出申請</h3>
+      <p>我們收到您的資料與照片，專員將依據您提供的資訊，於營業時間主動與您聯繫！</p>
+      
+      <a id="lineContactBtn" href="#" class="btn-link line-btn" target="_blank">💬 點此返回 LINE 通知已填單</a>
+    </div>
+
+  </div>
+
+  <!-- 邊角圓圈懸浮聯繫客服按鈕 (僅在第 2 頁顯示) -->
+  <div class="floating-contact-btn" id="floatingContactBtn" style="display: none;" onclick="goToStep(3)">
+    <span class="icon">💬</span>
+    <span class="text">聯繫客服</span>
+  </div>
+
+  <script>
+    const OFFICIAL_LINE_ID = "@988fjfvt"; 
+    // 如欲部屬至 GitHub Pages，請在此貼上您的 Google Apps Script 網頁應用程式網址：
+    const GAS_WEB_APP_URL = ""; 
+
+    let productLogicMap = {}; 
+    let hasSpecialLogic = false;
+
+    // 初始化：獲取產品提示庫
+    window.onload = function() {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(dataMap) { productLogicMap = dataMap || {}; })
+          .getProductTipsFromSheet();
+      } else if (GAS_WEB_APP_URL) {
+        fetch(GAS_WEB_APP_URL + "?action=getTips")
+          .then(res => res.json())
+          .then(dataMap => { productLogicMap = dataMap || {}; })
+          .catch(err => console.error("抓取提示失敗:", err));
+      }
+    };
+
+    function goToStep(step) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+
+      const floatBtn = document.getElementById("floatingContactBtn");
+      if (step === 2) {
+        floatBtn.style.display = "flex";
+      } else {
+        floatBtn.style.display = "none";
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    function handleStep1Next() {
+      const name = document.getElementById("userName").value.trim();
+      const phone = document.getElementById("userPhone").value.trim();
+      const product = document.getElementById("product").value;
+
+      if (!name) { alert("請填寫【LINE 名稱 / 稱呼】"); return; }
+      if (!phone) { alert("請填寫【聯絡電話】"); return; }
+      if (!product) { alert("請選擇【購買的產品】"); return; }
+
+      document.getElementById("bannerStep2").innerText = "📦 您選擇的商品： " + product;
+      document.getElementById("bannerStep3").innerText = "📦 您選擇的商品： " + product;
+
+      if (productLogicMap[product]) {
+        hasSpecialLogic = true;
+        document.getElementById("productTipContent").innerHTML = productLogicMap[product];
+        goToStep(2);
+      } else {
+        hasSpecialLogic = false;
+        goToStep(3);
+      }
+    }
+
+    function handleStep3Prev() {
+      if (hasSpecialLogic) {
+        goToStep(2);
+      } else {
+        goToStep(1);
+      }
+    }
+
+    function setWall(val, cardId) {
+      document.getElementById("wallType").value = val;
+      document.querySelectorAll('.card-grid .card-option').forEach(el => el.classList.remove('selected'));
+      document.getElementById(cardId).classList.add('selected');
+    }
+
+    function toggleIssueDetails() {
+      const issueType = document.getElementById("issueType").value;
+      const filmFields = document.getElementById("filmDetailFields");
+      const hookFields = document.getElementById("hookDetailFields");
+      const storageGroup = document.getElementById("storageImgGroup");
+
+      if (issueType === "膠片掉落") {
+        filmFields.style.display = "block";
+        hookFields.style.display = "none";
+        storageGroup.style.display = "block";
+      } else if (issueType === "勾盤掉落 / 斷裂") {
+        filmFields.style.display = "none";
+        hookFields.style.display = "block";
+        storageGroup.style.display = "block";
+      } else if (issueType === "其他") {
+        filmFields.style.display = "none";
+        hookFields.style.display = "none";
+        storageGroup.style.display = "block";
+      } else {
+        filmFields.style.display = "none";
+        hookFields.style.display = "none";
+        storageGroup.style.display = "none";
+      }
+    }
+
+    function toggleHelperImage() {
+      const helperVal = document.getElementById("helperSheet").value;
+      const helperGroup = document.getElementById("helperSheetImgGroup");
+      if (helperVal === "是") {
+        helperGroup.style.display = "block";
+      } else {
+        helperGroup.style.display = "none";
+      }
+    }
+
+    function previewImage(input, previewId) {
+      const preview = document.getElementById(previewId);
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) { preview.src = e.target.result; preview.style.display = "block"; };
+        reader.readAsDataURL(input.files[0]);
+      } else { preview.style.display = "none"; }
+    }
+
+    function fileToBase64(file, maxWidth = 1920, maxHeight = 1920, quality = 0.85) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            let width = img.width, height = img.height;
+            if (width > height) { 
+              if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; } 
+            } else { 
+              if (height > maxHeight) { width = Math.round((width * maxHeight) / height); height = maxHeight; } 
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+      });
+    }
+
+    async function submitForm() {
+      const userName = document.getElementById("userName").value.trim();
+      const userPhone = document.getElementById("userPhone").value.trim();
+      const product = document.getElementById("product").value;
+      const issueType = document.getElementById("issueType").value;
+      const issueDesc = document.getElementById("issueDesc").value.trim();
+
+      if (!issueType) { alert("請選擇【商品異常情況】"); return; }
+
+      let wallType = "", helperSheet = "", isWashed = "", selectedConditions = [];
+      let wallImgFile = null, helperSheetImgFile = null, filmImgFile = null;
+      let hookImgFile = null, hookRackImgFile = null;
+
+      const storageImgFile = document.getElementById("storageImg").files[0];
+      if (!storageImgFile) { alert("請上傳【收納物品如何放置照片】"); return; }
+
+      if (issueType === "膠片掉落") {
+        wallType = document.getElementById("wallType").value;
+        helperSheet = document.getElementById("helperSheet").value;
+        isWashed = document.getElementById("isWashed").value;
+        selectedConditions = Array.from(document.querySelectorAll('input[name="filmCondition"]:checked')).map(cb => cb.value);
+
+        if (!helperSheet) { alert("請選擇【是否使用透明輔助膠片】"); return; }
+        if (!isWashed) { alert("請選擇【是否清洗膠片】"); return; }
+        if (selectedConditions.length === 0) { alert("請至少選擇一項【含掛勾的膠片情況】"); return; }
+
+        wallImgFile = document.getElementById("wallImg").files[0];
+        filmImgFile = document.getElementById("filmImg").files[0];
+
+        if (!wallImgFile) { alert("請上傳【牆面照片】"); return; }
+        
+        if (helperSheet === "是") {
+          helperSheetImgFile = document.getElementById("helperSheetImg").files[0];
+          if (!helperSheetImgFile) { alert("請上傳【輔助膠片照片】"); return; }
+        }
+
+        if (!filmImgFile) { alert("請上传【膠片扣在架子的照片】"); return; }
+      } else if (issueType === "勾盤掉落 / 斷裂") {
+        hookImgFile = document.getElementById("hookImg").files[0];
+        hookRackImgFile = document.getElementById("hookRackImg").files[0];
+
+        if (!hookImgFile) { alert("請上傳【勾盤受損或脫落處照片】"); return; }
+        if (!hookRackImgFile) { alert("請上傳【架子扣法與整體照片】"); return; }
+      }
+
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerText = "資料傳送中...";
+
+      try {
+        const payload = {
+          action: "submitForm",
+          userName: userName,
+          userPhone: userPhone,
+          product: product,
+          issueType: issueType,
+          issueDesc: issueDesc,
+          wallType: wallType,
+          helperSheet: helperSheet,
+          isWashed: isWashed,
+          filmConditions: selectedConditions,
+          wallImgBase64: wallImgFile ? await fileToBase64(wallImgFile) : "",
+          helperSheetImgBase64: helperSheetImgFile ? await fileToBase64(helperSheetImgFile) : "",
+          filmImgBase64: filmImgFile ? await fileToBase64(filmImgFile) : "",
+          hookImgBase64: hookImgFile ? await fileToBase64(hookImgFile) : "",
+          hookRackImgBase64: hookRackImgFile ? await fileToBase64(hookRackImgFile) : "",
+          storageImgBase64: storageImgFile ? await fileToBase64(storageImgFile) : ""
+        };
+
+        const onComplete = function() {
+          document.getElementById("formCard").style.display = "none";
+
+          const prefilledMsg = encodeURIComponent("專員您好，我已完成售後服務表單填寫！\n姓名/LINE：" + userName + "\n電話：" + userPhone + "\n商品：" + product + "\n狀況：" + issueType);
+          const lineLink = "https://line.me/R/oaMessage/" + OFFICIAL_LINE_ID + "/?" + prefilledMsg;
+          document.getElementById("lineContactBtn").setAttribute("href", lineLink);
+
+          document.getElementById("resultCard").style.display = "block";
+          window.scrollTo(0, 0);
+        };
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run
+            .withSuccessHandler(onComplete)
+            .withFailureHandler(function(err) {
+              alert("送出失敗：" + err);
+              submitBtn.disabled = false;
+              submitBtn.innerText = "送出申請";
+            })
+            .processDiagnosis(payload);
+        } else if (GAS_WEB_APP_URL) {
+          const resp = await fetch(GAS_WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: { "Content-Type": "text/plain;charset=utf-8" }
+          });
+          const resJson = await resp.json();
+          if (resJson.status === "success") {
+            onComplete();
+          } else {
+            alert("送出失敗：" + (resJson.message || "伺服器異常"));
+            submitBtn.disabled = false;
+            submitBtn.innerText = "送出申請";
+          }
+        } else {
+          setTimeout(onComplete, 1000);
+        }
+
+      } catch (error) {
+        alert("資料處理失敗，請檢查網路或照片後重試。");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "送出申請";
+      }
+    }
+  </script>
+</body>
+</html>
