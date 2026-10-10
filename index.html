@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>家而適｜售後快查與協助</title>
   <style>
     :root {
@@ -147,7 +150,6 @@
     button.btn-prev { background-color: #6c757d; }
     button:disabled { background-color: #c3e6cb; }
 
-    /* 懸浮聯繫客服按鈕與動畫 */
     .floating-contact-btn {
       position: fixed;
       bottom: 24px;
@@ -199,11 +201,10 @@
       <p>售後快查與協助</p>
     </div>
 
-    <!-- 主要表單區域 -->
     <div class="form-card" id="formCard">
       <form id="repairForm">
         
-        <!-- ================= 第 1 層：基本資料與產品選擇 ================= -->
+        <!-- 第 1 層 -->
         <div class="step-content active" id="step-1">
           <div class="form-group">
             <label>您的 LINE 名稱 / 稱呼 <span class="req">*</span></label>
@@ -213,8 +214,6 @@
             <label>聯絡電話 <span class="req">*</span></label>
             <input type="tel" id="userPhone" placeholder="請輸入聯絡電話 (例: 0912345678)">
           </div>
-          
-          <!-- 可輸入搜尋/輸入文字推薦產品的對應欄位 -->
           <div class="form-group">
             <label>請選擇或輸入您購買的產品 <span class="req">*</span></label>
             <input type="text" id="product" list="productList" placeholder="點擊選擇或可輸入關鍵字搜尋產品...">
@@ -290,24 +289,19 @@
           </div>
         </div>
 
-        <!-- ================= 第 2 層：產品溫馨提示 ================= -->
+        <!-- 第 2 層 -->
         <div class="step-content" id="step-2">
           <div class="selected-product-banner" id="bannerStep2"></div>
-          
-          <div class="tip-box" id="productTipContent">
-            <!-- 動態注入提示文字 -->
-          </div>
-
+          <div class="tip-box" id="productTipContent"></div>
           <p style="text-align: center; color: #888; font-size: 12px; margin-top: 20px;">
             若上述安裝說明無法排除您的問題，請點擊右下角【聯繫客服】按鈕。
           </p>
-
           <div class="btn-group">
             <button type="button" class="btn-prev" onclick="goToStep(1)">上一步</button>
           </div>
         </div>
 
-        <!-- ================= 第 3 層：客服排查表單 ================= -->
+        <!-- 第 3 層 -->
         <div class="step-content" id="step-3">
           <div class="selected-product-banner" id="bannerStep3"></div>
 
@@ -321,7 +315,6 @@
             </select>
           </div>
 
-          <!-- A. 當選擇【膠片掉落】時動態展開 -->
           <div id="filmDetailFields" style="display: none;">
             <div class="form-group">
               <label>安裝牆面材質 <span class="req">*</span></label>
@@ -379,7 +372,6 @@
             </div>
           </div>
 
-          <!-- B. 當選擇【勾盤掉落 / 斷裂】時動態展開 -->
           <div id="hookDetailFields" style="display: none;">
             <div class="form-group">
               <label>勾盤受損或脫落處照片 <span class="req">*</span></label>
@@ -393,7 +385,6 @@
             </div>
           </div>
 
-          <!-- C. 新增：當選擇【其他商品問題】時動態展開欄位 -->
           <div id="otherDetailFields" style="display: none;">
             <div class="form-group">
               <label>產品現況含牆面照片 <span class="req">*</span></label>
@@ -402,14 +393,12 @@
             </div>
           </div>
 
-          <!-- 通用必填欄位：收納物品如何放置照片 -->
           <div class="form-group" id="storageImgGroup" style="display: none;">
             <label>收納物品如何放置照片 <span class="req">*</span></label>
             <input type="file" id="storageImg" accept="image/*" onchange="previewImage(this, 'storagePreview')">
             <img id="storagePreview" class="img-preview">
           </div>
 
-          <!-- 其他說明 -->
           <div class="form-group">
             <label>其他說明</label>
             <textarea id="issueDesc" placeholder="如有其他使用狀況或需要協助的地方，請在此補充說明..."></textarea>
@@ -424,18 +413,15 @@
       </form>
     </div>
 
-    <!-- ================= 第 4 層：已送出申請 ================= -->
     <div class="result-card" id="resultCard">
       <div class="result-icon">✅</div>
       <h3>已送出申請</h3>
       <p>我們收到您的資料與照片，專員將依據您提供的資訊，於營業時間主動與您聯繫！</p>
-      
       <a id="lineContactBtn" href="#" class="btn-link line-btn" target="_blank">💬 點此返回 LINE 通知已填單</a>
     </div>
 
   </div>
 
-  <!-- 邊角圓圈懸浮聯繫客服按鈕 (僅在第2頁顯示) -->
   <div class="floating-contact-btn" id="floatingContactBtn" style="display: none;" onclick="goToStep(3)">
     <span class="icon">💬</span>
     <span class="text">聯繫客服</span>
@@ -448,7 +434,6 @@
     let productLogicMap = {}; 
     let hasSpecialLogic = false;
 
-    // 初始化：獲取產品提示庫
     window.onload = function() {
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
@@ -561,8 +546,8 @@
       } else { preview.style.display = "none"; }
     }
 
-    // 效能優化：寬高調為 1200px，品質 0.8，可使檔案縮小 60% 以上，速度提升 3 倍
-    function fileToBase64(file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) {
+    // 極速壓縮：解析度改為 800px，大幅減輕檔案與網路傳輸負擔
+    function fileToBase64(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
       if (!file) return Promise.resolve("");
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -641,10 +626,9 @@
 
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
-      submitBtn.innerText = "資料傳送中...";
+      submitBtn.innerText = "極速傳送中...";
 
       try {
-        // 速度優化：使用 Promise.all 平行進行圖片非同步轉檔與壓縮
         const [
           storageImgBase64,
           wallImgBase64,
@@ -685,11 +669,9 @@
 
         const onComplete = function() {
           document.getElementById("formCard").style.display = "none";
-
           const prefilledMsg = encodeURIComponent("專員您好，我已完成售後服務表單填寫！\n姓名/LINE：" + userName + "\n電話：" + userPhone + "\n商品：" + product + "\n狀況：" + issueType);
           const lineLink = "https://line.me/R/oaMessage/" + OFFICIAL_LINE_ID + "/?" + prefilledMsg;
           document.getElementById("lineContactBtn").setAttribute("href", lineLink);
-
           document.getElementById("resultCard").style.display = "block";
           window.scrollTo(0, 0);
         };
