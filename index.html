@@ -190,7 +190,7 @@
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
-            <input type="tel" id="userPhone"
+            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話">
           </div>
 
           <div class="form-group">
@@ -291,7 +291,7 @@
           </div>
         </div>
 
-        <!-- ================= 第 2 層：客服排查表單 ================= -->
+        <!-- ================= 第 2 層：客服排查表單（畫面 ID 改為 step-2） ================= -->
         <div class="step-content" id="step-2">
           <div class="form-group">
             <label>商品異常情況 <span class="req">*</span></label>
@@ -415,6 +415,7 @@
       if (!product) { alert("請選擇或輸入【購買的產品】"); return; }
       if (!proofImg) { alert("請上傳【購買證明或保固證明】"); return; }
 
+      // 略過提示庫頁面，直接跳到排查表單 (step-2)
       goToStep(2);
     }
 
