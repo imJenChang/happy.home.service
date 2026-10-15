@@ -54,7 +54,6 @@
     label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; }
     label .req { color: #dc3545; }
     
-    /* 確保 iPhone 等行動裝置也能清楚看見下拉選單箭頭 */
     select, input[type="file"], input[type="text"], input[type="tel"], textarea {
       width: 100%;
       padding: 10px 12px;
@@ -99,16 +98,23 @@
       color: var(--primary-hover);
     }
 
-    /* 照片示意圖卡片 */
-    .photo-guide {
-      background: #f1f8f5;
-      border: 1px dashed #28a745;
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      color: #2e7d32;
+    /* 拍照示意圖樣式 */
+    .photo-guide-container {
       margin-bottom: 6px;
+    }
+    .photo-guide-title {
+      font-size: 12px;
       font-weight: bold;
+      color: #2e7d32;
+      margin-bottom: 4px;
+    }
+    .photo-guide-img {
+      width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: #fff;
     }
 
     .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
@@ -169,8 +175,8 @@
 <body>
   <div class="container">
     <div class="header-card">
-      <h2>家而適｜售後快查與協助</h2>
-      <p>請依步驟完成填寫，客服專員將為您迅速處理售後需求</p>
+      <h2>家而適</h2>
+      <p>售後快查與協助</p>
     </div>
 
     <div class="form-card" id="formCard">
@@ -179,12 +185,12 @@
         <!-- ================= 第 1 層：基本資料與產品選擇 ================= -->
         <div class="step-content active" id="step-1">
           <div class="form-group">
-            <label>您的 LINE 名稱 / 稱呼 <span class="req">*</span></label>
-            <input type="text" id="userName" placeholder="請輸入您的 LINE 暱稱或姓名">
+            <label>LINE 名稱 <span class="req">*</span></label>
+            <input type="text" id="userName" placeholder="請輸入您的 LINE 名稱">
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
-            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話 (例: 0912345678)">
+            <input type="tel" id="userPhone"
           </div>
 
           <div class="form-group">
@@ -200,7 +206,7 @@
 
           <div class="form-group">
             <label>通路訂單編號 <span class="req">*</span></label>
-            <input type="text" id="orderId" placeholder="請輸入訂單編號 (便於專員快速核對)">
+            <input type="text" id="orderId" placeholder="請複製通路訂單編號">
           </div>
           
           <div class="form-group">
@@ -275,8 +281,7 @@
           </div>
 
           <div class="form-group">
-            <label>購買證明或保固截圖 <span class="req">*</span></label>
-            <div class="photo-guide">📸 示意圖：請截圖包含購買時間、通路明細或訂單編號的畫面</div>
+            <label>截圖 購買證明（含時間及產品明細）或保固證明 <span class="req">*</span></label>
             <input type="file" id="proofImg" accept="image/*" onchange="previewImage(this, 'proofPreview')">
             <img id="proofPreview" class="img-preview">
           </div>
@@ -286,7 +291,7 @@
           </div>
         </div>
 
-        <!-- ================= 第 2 層：客服排查表單 (統一標準問題) ================= -->
+        <!-- ================= 第 2 層：客服排查表單 ================= -->
         <div class="step-content" id="step-2">
           <div class="form-group">
             <label>商品異常情況 <span class="req">*</span></label>
@@ -328,28 +333,40 @@
 
           <div class="form-group">
             <label>牆面照片 <span class="req">*</span></label>
-            <div class="photo-guide">📸 示意圖：請拿架子比著原本安裝的牆面位置拍照</div>
+            <div class="photo-guide-container">
+              <div class="photo-guide-title">拍照示意圖：</div>
+              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/牆面照片.HEIC" class="photo-guide-img" alt="牆面照片示意圖">
+            </div>
             <input type="file" id="wallImg" accept="image/*" onchange="previewImage(this, 'wallPreview')">
             <img id="wallPreview" class="img-preview">
           </div>
 
           <div class="form-group" id="helperSheetImgGroup" style="display: none;">
             <label>輔助膠片照片 <span class="req">*</span></label>
-            <div class="photo-guide">📸 示意圖：請拍攝透明輔助膠片貼在牆面上的服貼狀況</div>
+            <div class="photo-guide-container">
+              <div class="photo-guide-title">拍照示意圖：</div>
+              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/輔助膠片照片.HEIC" class="photo-guide-img" alt="輔助膠片照片示意圖">
+            </div>
             <input type="file" id="helperSheetImg" accept="image/*" onchange="previewImage(this, 'helperSheetPreview')">
             <img id="helperSheetPreview" class="img-preview">
           </div>
 
           <div class="form-group">
             <label>膠片扣在架子的照片 <span class="req">*</span></label>
-            <div class="photo-guide">📸 示意圖：請拍攝膠片與架子橫桿扣合處的特寫</div>
+            <div class="photo-guide-container">
+              <div class="photo-guide-title">拍照示意圖：</div>
+              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/膠片現況照片.HEIC" class="photo-guide-img" alt="膠片現況照片示意圖">
+            </div>
             <input type="file" id="filmImg" accept="image/*" onchange="previewImage(this, 'filmPreview')">
             <img id="filmPreview" class="img-preview">
           </div>
 
           <div class="form-group">
             <label>收納物品如何放置照片 <span class="req">*</span></label>
-            <div class="photo-guide">📸 示意圖：請拍攝架子上擺放的所有物品擺放狀況</div>
+            <div class="photo-guide-container">
+              <div class="photo-guide-title">拍照示意圖：</div>
+              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/收納物品如何放置照片.HEIC" class="photo-guide-img" alt="收納物品照片示意圖">
+            </div>
             <input type="file" id="storageImg" accept="image/*" onchange="previewImage(this, 'storagePreview')">
             <img id="storagePreview" class="img-preview">
           </div>
@@ -396,9 +413,8 @@
       if (!channel) { alert("請選擇【購買通路】"); return; }
       if (!orderId) { alert("請填寫【通路訂單編號】"); return; }
       if (!product) { alert("請選擇或輸入【購買的產品】"); return; }
-      if (!proofImg) { alert("請上傳【購買證明或保固截圖】"); return; }
+      if (!proofImg) { alert("請上傳【購買證明或保固證明】"); return; }
 
-      // 略過第二頁提示庫，直接進入排查表單
       goToStep(2);
     }
 
