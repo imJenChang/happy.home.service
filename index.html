@@ -19,7 +19,7 @@
       --text-main: #2c3e50;
       --text-sub: #606f7b;
       --border-color: #e0e6ed;
-      --input-bg: #ffffff;
+      --accent-gray: #f8faf9;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
@@ -58,32 +58,26 @@
     label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #334155; }
     label .req { color: #e53e3e; margin-left: 2px; }
     
-    /* 1. 統一所有輸入框與選單的基礎外觀 */
+    /* 基礎表單輸入框樣式 */
     select, input[type="file"], input[type="text"], input[type="tel"], textarea {
       width: 100%;
-      height: 44px;
-      padding: 10px 13px;
+      padding: 11px 13px;
       font-size: 13.5px;
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      background-color: var(--input-bg);
+      background-color: #ffffff;
       color: var(--text-main);
       outline: none;
       box-sizing: border-box;
       transition: all 0.2s ease;
     }
-
-    /* 檔案選擇器特別高度設定 */
-    input[type="file"] {
-      height: auto;
-      padding: 8px 10px;
-    }
     
-    /* 2. 普通 <select> 下拉選單樣式 */
+    /* 1. 普通 <select> 下拉選單：徹底清除 iOS 原生外觀，手動加上灰色自訂箭頭 */
     select {
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
+      background-color: #ffffff;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
@@ -91,13 +85,13 @@
       padding-right: 36px;
     }
 
-    /* 3. 產品搜尋輸入框 (#product) 樣式：無背景箭頭，保留原生 datalist 運作機制 */
+    /* 2. 產品搜尋輸入框 (#product)：讓 iOS 原生 datalist 箭頭渲染，避免雙箭頭 */
     #product {
+      background-color: var(--accent-gray);
       padding-right: 12px;
     }
 
-    /* 4. 統一所有欄位對焦（Focus）狀態下的顏色效果 */
-    select:focus, input:focus, textarea:focus {
+    select:focus, input:focus {
       border-color: var(--primary);
       background-color: #ffffff;
       box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
@@ -110,15 +104,18 @@
       margin-top: 6px;
     }
     .card-option {
-      border: 1px solid var(--border-color);
+      border: 1.5px solid var(--border-color);
       border-radius: 10px;
       padding: 12px 8px;
       text-align: center;
       cursor: pointer;
-      background: #f8faf9;
+      background: var(--accent-gray);
       font-size: 12.5px;
       color: var(--text-main);
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .card-option.selected {
       border-color: var(--primary);
@@ -128,7 +125,7 @@
     }
 
     .photo-guide-container {
-      background-color: #f8faf9;
+      background-color: var(--accent-gray);
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 10px;
@@ -140,7 +137,7 @@
       font-size: 11.5px;
       font-weight: 600;
       color: var(--primary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       text-align: left;
     }
     .photo-guide-img {
@@ -156,7 +153,7 @@
     .checkbox-item {
       display: flex;
       align-items: center;
-      background: #f8faf9;
+      background: var(--accent-gray);
       border: 1px solid var(--border-color);
       padding: 10px 12px;
       border-radius: 10px;
@@ -165,13 +162,18 @@
     }
     .checkbox-item input { margin-right: 10px; accent-color: var(--primary); transform: scale(1.1); }
 
+    /* 客人上傳圖片預覽：簡潔精緻陰影外框，置中顯示 */
     .img-preview {
       max-width: 100%;
       max-height: 180px;
       margin-top: 10px;
+      margin-left: auto;
+      margin-right: auto;
       border-radius: 8px;
       display: none;
-      border: 1.5px solid var(--primary);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      object-fit: contain;
     }
 
     .btn-group { display: flex; gap: 10px; margin-top: 24px; }
@@ -222,12 +224,12 @@
         <!-- ================= 第 1 層：基本資料與產品選擇 ================= -->
         <div class="step-content active" id="step-1">
           <div class="form-group">
-            <label>您的 LINE 名稱 / 稱呼 <span class="req">*</span></label>
-            <input type="text" id="userName" placeholder="載入中或請輸入您的 LINE 暱稱">
+            <label>LINE 名稱 <span class="req">*</span></label>
+            <input type="text" id="userName" placeholder="請輸入您的 LINE 名稱">
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
-            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話 (例: 0912345678)">
+            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話">
           </div>
 
           <div class="form-group">
@@ -371,7 +373,7 @@
           <div class="form-group">
             <label>牆面照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <div class="photo-guide-title">拍照示意圖：</div>
               <img src="https://github.com/imJenChang/happy.home.service/blob/main/wall.JPG?raw=true" class="photo-guide-img" alt="牆面照片示意圖">
             </div>
             <input type="file" id="wallImg" accept="image/*" onchange="previewImage(this, 'wallPreview')">
@@ -381,7 +383,7 @@
           <div class="form-group" id="helperSheetImgGroup" style="display: none;">
             <label>輔助膠片照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <div class="photo-guide-title">拍照示意圖：</div>
               <img src="https://github.com/imJenChang/happy.home.service/blob/main/helper.jpg?raw=true" class="photo-guide-img" alt="輔助膠片照片示意圖">
             </div>
             <input type="file" id="helperSheetImg" accept="image/*" onchange="previewImage(this, 'helperSheetPreview')">
@@ -391,7 +393,7 @@
           <div class="form-group">
             <label>膠片扣在架子的照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <div class="photo-guide-title">拍照示意圖：</div>
               <img src="https://github.com/imJenChang/happy.home.service/blob/main/hookpad.JPG?raw=true" class="photo-guide-img" alt="膠片現況照片示意圖">
             </div>
             <input type="file" id="filmImg" accept="image/*" onchange="previewImage(this, 'filmPreview')">
@@ -401,7 +403,7 @@
           <div class="form-group">
             <label>收納物品如何放置照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <div class="photo-guide-title">拍照示意圖：</div>
               <img src="https://github.com/imJenChang/happy.home.service/blob/main/storage.JPG?raw=true" class="photo-guide-img" alt="收納物品照片示意圖">
             </div>
             <input type="file" id="storageImg" accept="image/*" onchange="previewImage(this, 'storagePreview')">
@@ -421,7 +423,7 @@
     <div class="result-card" id="resultCard">
       <div class="result-icon">✅</div>
       <h3>已送出申請</h3>
-      <p>我們收到您的資料與照片，專員將依據您提供的資訊，於營業時間主動與您聯繫！</p>
+      <p>我們收到您的資料與照片，客服專員將依據您提供的資訊，於營業時間主動與您聯繫！</p>
       <a id="lineContactBtn" href="#" class="btn-link line-btn" target="_blank">💬 點此返回 LINE 通知已填單</a>
     </div>
 
@@ -509,7 +511,8 @@
       } else { preview.style.display = "none"; }
     }
 
-    function fileToBase64(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
+    /* 將 maxWidth/maxHeight 調至 600，品質調至 0.75，大幅縮小上傳體積以提升上傳速度 */
+    function fileToBase64(file, maxWidth = 600, maxHeight = 600, quality = 0.75) {
       if (!file) return Promise.resolve("");
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -528,7 +531,7 @@
             canvas.width = width; canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
+            ctx.imageSmoothingQuality = 'medium';
             ctx.drawImage(img, 0, 0, width, height);
             resolve(canvas.toDataURL('image/jpeg', quality));
           };
