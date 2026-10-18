@@ -7,89 +7,101 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>家而適｜售後快查與協助</title>
+  <!-- 引入 LINE LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     :root {
-      --primary: #28a745;
-      --primary-hover: #218838;
-      --primary-light: #e8f5e9;
-      --bg-color: #f7f9f7;
+      --primary: #2e7d32;
+      --primary-hover: #1b5e20;
+      --primary-light: #f1f8e9;
+      --bg-color: #f4f6f4;
       --card-bg: #ffffff;
-      --text-main: #343a40;
-      --text-sub: #6c757d;
-      --border-color: #e2e8f0;
+      --text-main: #2c3e50;
+      --text-sub: #606f7b;
+      --border-color: #e0e6ed;
+      --accent-gray: #f8faf9;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: "微軟正黑體", "Microsoft JhengHei", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "微軟正黑體", "Microsoft JhengHei", sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
-      padding: 16px 12px 36px;
+      padding: 16px 12px 40px;
       line-height: 1.5;
     }
     .container { max-width: 480px; margin: 0 auto; position: relative; }
+    
     .header-card {
       background: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 18px 16px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
       border-top: 4px solid var(--primary);
       margin-bottom: 16px;
     }
-    .header-card h2 { margin: 0 0 4px 0; font-size: 18px; }
+    .header-card h2 { margin: 0 0 4px 0; font-size: 18px; font-weight: 700; color: #1e293b; }
     .header-card p { margin: 0; font-size: 12px; color: var(--text-sub); }
     
     .form-card {
       background: var(--card-bg);
-      border-radius: 12px;
-      padding: 18px 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      border-radius: 14px;
+      padding: 20px 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
       border: 1px solid var(--border-color);
     }
     .step-content { display: none; }
     .step-content.active { display: block; }
     
-    .form-group { margin-bottom: 18px; }
-    label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; }
-    label .req { color: #dc3545; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #334155; }
+    label .req { color: #e53e3e; margin-left: 2px; }
     
     select, input[type="file"], input[type="text"], input[type="tel"], textarea {
       width: 100%;
-      padding: 10px 12px;
-      font-size: 13px;
+      padding: 11px 13px;
+      font-size: 13.5px;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      background: #fafafa;
+      border-radius: 10px;
+      background: var(--accent-gray);
+      color: var(--text-main);
       outline: none;
       box-sizing: border-box;
+      transition: all 0.2s ease;
     }
-    select {
+    select, #product {
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
       background-size: 16px;
       padding-right: 36px;
     }
+    select:focus, input:focus {
+      border-color: var(--primary);
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+    }
 
     .card-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
       margin-top: 6px;
     }
     .card-option {
       border: 1.5px solid var(--border-color);
-      border-radius: 8px;
-      padding: 10px 8px;
+      border-radius: 10px;
+      padding: 12px 8px;
       text-align: center;
       cursor: pointer;
-      background: #fafafa;
-      font-size: 12px;
-      transition: all 0.2s;
+      background: var(--accent-gray);
+      font-size: 12.5px;
+      color: var(--text-main);
+      transition: all 0.2s ease;
     }
     .card-option.selected {
       border-color: var(--primary);
@@ -98,47 +110,55 @@
       color: var(--primary-hover);
     }
 
-    /* 拍照示意圖樣式 */
+    /* 拍照示意圖獨立乾淨區塊 */
     .photo-guide-container {
-      margin-bottom: 6px;
+      background-color: var(--accent-gray);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 8px;
+      text-align: center;
     }
     .photo-guide-title {
-      font-size: 12px;
-      font-weight: bold;
-      color: #2e7d32;
-      margin-bottom: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 6px;
+      text-align: left;
     }
     .photo-guide-img {
       width: 100%;
-      max-height: 180px;
+      max-height: 190px;
       object-fit: contain;
       border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background: #fff;
+      background: #ffffff;
+      display: block;
     }
 
     .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
     .checkbox-item {
       display: flex;
       align-items: center;
-      background: #fafafa;
+      background: var(--accent-gray);
       border: 1px solid var(--border-color);
-      padding: 8px 10px;
-      border-radius: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
       font-size: 13px;
+      cursor: pointer;
     }
-    .checkbox-item input { margin-right: 8px; accent-color: var(--primary); }
+    .checkbox-item input { margin-right: 10px; accent-color: var(--primary); transform: scale(1.1); }
 
     .img-preview {
       max-width: 100%;
-      max-height: 160px;
-      margin-top: 8px;
-      border-radius: 6px;
+      max-height: 180px;
+      margin-top: 10px;
+      border-radius: 8px;
       display: none;
-      border: 1px solid var(--border-color);
+      border: 1.5px solid var(--primary);
     }
 
-    .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-group { display: flex; gap: 10px; margin-top: 24px; }
     button, .btn-link {
       display: block;
       width: 100%;
@@ -147,36 +167,37 @@
       background-color: var(--primary);
       color: #fff;
       border: none;
-      padding: 12px;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 8px;
+      padding: 13px;
+      font-size: 14.5px;
+      font-weight: 700;
+      border-radius: 10px;
       cursor: pointer;
       box-sizing: border-box;
+      transition: background-color 0.2s ease;
     }
-    button.btn-prev { background-color: #6c757d; }
-    button:disabled { background-color: #c3e6cb; }
+    button.btn-prev { background-color: #64748b; }
+    button:disabled { background-color: #a5d6a7; cursor: not-allowed; }
 
     .result-card {
       display: none;
       background: var(--card-bg);
-      border-radius: 12px;
-      padding: 24px 16px;
+      border-radius: 14px;
+      padding: 28px 18px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       border: 1px solid var(--border-color);
     }
-    .result-icon { font-size: 48px; margin-bottom: 12px; }
-    .result-card h3 { margin: 0 0 8px 0; color: var(--primary-hover); font-size: 18px; }
-    .result-card p { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 20px; }
+    .result-icon { font-size: 52px; margin-bottom: 12px; }
+    .result-card h3 { margin: 0 0 8px 0; color: var(--primary); font-size: 19px; }
+    .result-card p { font-size: 13.5px; color: #475569; line-height: 1.6; margin-bottom: 22px; }
     .line-btn { background-color: #06c755; color: #ffffff; font-size: 15px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-card">
-      <h2>家而適</h2>
-      <p>售後快查與協助</p>
+      <h2>家而適｜售後快查與協助</h2>
+      <p>請依步驟完成填寫，客服專員將為您迅速處理售後需求</p>
     </div>
 
     <div class="form-card" id="formCard">
@@ -185,8 +206,8 @@
         <!-- ================= 第 1 層：基本資料與產品選擇 ================= -->
         <div class="step-content active" id="step-1">
           <div class="form-group">
-            <label>LINE 名稱 <span class="req">*</span></label>
-            <input type="text" id="userName" placeholder="請輸入您的 LINE 名稱">
+            <label>您的 LINE 名稱 / 稱呼 <span class="req">*</span></label>
+            <input type="text" id="userName" placeholder="載入中或請輸入您的 LINE 暱稱">
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
@@ -206,7 +227,7 @@
 
           <div class="form-group">
             <label>通路訂單編號 <span class="req">*</span></label>
-            <input type="text" id="orderId" placeholder="請複製通路訂單編號">
+            <input type="text" id="orderId" placeholder="請複製平台訂單編號">
           </div>
           
           <div class="form-group">
@@ -291,7 +312,7 @@
           </div>
         </div>
 
-        <!-- ================= 第 2 層：客服排查表單（畫面 ID 改為 step-2） ================= -->
+        <!-- ================= 第 2 層：客服排查表單 ================= -->
         <div class="step-content" id="step-2">
           <div class="form-group">
             <label>商品異常情況 <span class="req">*</span></label>
@@ -334,8 +355,8 @@
           <div class="form-group">
             <label>牆面照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/牆面照片.HEIC" class="photo-guide-img" alt="牆面照片示意圖">
+              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <img src="https://github.com/imJenChang/happy.home.service/blob/main/wall.JPG?raw=true" class="photo-guide-img" alt="牆面照片示意圖">
             </div>
             <input type="file" id="wallImg" accept="image/*" onchange="previewImage(this, 'wallPreview')">
             <img id="wallPreview" class="img-preview">
@@ -344,8 +365,8 @@
           <div class="form-group" id="helperSheetImgGroup" style="display: none;">
             <label>輔助膠片照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/輔助膠片照片.HEIC" class="photo-guide-img" alt="輔助膠片照片示意圖">
+              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <img src="https://github.com/imJenChang/happy.home.service/blob/main/helper.jpg?raw=true" class="photo-guide-img" alt="輔助膠片照片示意圖">
             </div>
             <input type="file" id="helperSheetImg" accept="image/*" onchange="previewImage(this, 'helperSheetPreview')">
             <img id="helperSheetPreview" class="img-preview">
@@ -354,8 +375,8 @@
           <div class="form-group">
             <label>膠片扣在架子的照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/膠片現況照片.HEIC" class="photo-guide-img" alt="膠片現況照片示意圖">
+              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <img src="https://github.com/imJenChang/happy.home.service/blob/main/hookpad.JPG?raw=true" class="photo-guide-img" alt="膠片現況照片示意圖">
             </div>
             <input type="file" id="filmImg" accept="image/*" onchange="previewImage(this, 'filmPreview')">
             <img id="filmPreview" class="img-preview">
@@ -364,8 +385,8 @@
           <div class="form-group">
             <label>收納物品如何放置照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
-              <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://raw.githubusercontent.com/imJenChang/happy.home.service/main/收納物品如何放置照片.HEIC" class="photo-guide-img" alt="收納物品照片示意圖">
+              <div class="photo-guide-title">📷 拍照示意圖：</div>
+              <img src="https://github.com/imJenChang/happy.home.service/blob/main/storage.JPG?raw=true" class="photo-guide-img" alt="收納物品照片示意圖">
             </div>
             <input type="file" id="storageImg" accept="image/*" onchange="previewImage(this, 'storagePreview')">
             <img id="storagePreview" class="img-preview">
@@ -393,6 +414,36 @@
   <script>
     const OFFICIAL_LINE_ID = "@988fjfvt"; 
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx35ZVnpAQ-0plN_9GOMrLrJ213BHYphEwZ-TWtmzLM_j6kkgdDaZ8c-QP8wN4F0U25OA/exec"; 
+    const LIFF_ID = "YOUR_LIFF_ID_HERE"; // 請替換為您的 LINE LIFF ID (例如: 1234567890-AbCdEfGh)
+
+    // 頁面載入時初始化 LIFF 並自動帶入 LINE 暱稱
+    window.onload = function() {
+      initializeLiff();
+    };
+
+    function initializeLiff() {
+      if (typeof liff === 'undefined') return;
+      liff.init({ liffId: LIFF_ID })
+        .then(() => {
+          if (!liff.isLoggedIn()) {
+            liff.login();
+          } else {
+            liff.getProfile()
+              .then(profile => {
+                const nameInput = document.getElementById("userName");
+                if (profile.displayName && nameInput) {
+                  nameInput.value = profile.displayName;
+                }
+              })
+              .catch(err => {
+                console.error("取得 LINE Profile 失敗", err);
+              });
+          }
+        })
+        .catch(err => {
+          console.error("LIFF 初始化失敗", err);
+        });
+    }
 
     function goToStep(step) {
       document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
@@ -415,7 +466,6 @@
       if (!product) { alert("請選擇或輸入【購買的產品】"); return; }
       if (!proofImg) { alert("請上傳【購買證明或保固證明】"); return; }
 
-      // 略過提示庫頁面，直接跳到排查表單 (step-2)
       goToStep(2);
     }
 
@@ -503,7 +553,7 @@
 
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
-      submitBtn.innerText = "資料傳送中";
+      submitBtn.innerText = "資料傳送中...";
 
       try {
         const [
