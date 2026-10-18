@@ -206,7 +206,7 @@
     .result-card p { font-size: 13.5px; color: #475569; line-height: 1.6; margin-bottom: 22px; }
     .line-btn { background-color: #06c755; color: #ffffff; font-size: 15px; }
 
-    /* ================= 品牌專屬載入 GIF 遮罩樣式 ================= */
+    /* ================= 品牌專屬載入 GIF 遮罩樣式（已放大至與下排文字相當） ================= -->
     #loadingOverlay {
       display: none;
       position: fixed;
@@ -214,32 +214,34 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(27, 94, 32, 0.8); /* 品牌深綠色半透明遮罩 */
-      backdrop-filter: blur(4px);
+      background: rgba(27, 94, 32, 0.82); /* 品牌深綠色半透明遮罩 */
+      backdrop-filter: blur(5px);
       z-index: 9999;
       justify-content: center;
       align-items: center;
       flex-direction: column;
       color: #ffffff;
+      padding: 20px;
     }
     .loading-gif {
-      width: 80px;
-      height: 80px;
+      width: 240px; /* 放大寬度與下排文字相當 */
+      max-width: 70vw; /* 手機上保持適當比例 */
+      height: auto;
       object-fit: contain;
-      margin-bottom: 14px;
+      margin-bottom: 18px;
       background: transparent;
     }
     .loading-text {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-align: center;
-      padding: 0 20px;
+      margin-bottom: 6px;
     }
     .loading-subtext {
-      font-size: 12.5px;
+      font-size: 13px;
       color: #c8e6c9;
-      margin-top: 6px;
+      text-align: center;
     }
   </style>
 </head>
@@ -247,14 +249,14 @@
   <!-- 全螢幕品牌 GIF 載入動畫遮罩 -->
   <div id="loadingOverlay">
     <img src="https://github.com/imJenChang/happy.home.service/blob/main/loading.gif?raw=true" class="loading-gif" alt="載入中動畫">
-    <div class="loading-text">照片上傳中，請稍候...</div>
-    <div class="loading-subtext">正在為您建立專屬售後紀錄</div>
+    <div class="loading-text">正在為您建立專屬的售後諮詢紀錄</div>
+    <div class="loading-subtext">照片上傳中，請稍候...</div>
   </div>
 
   <div class="container">
     <div class="header-card">
       <h2>家而適｜售後快查與協助</h2>
-      <p>請依步驟完成填寫，客服專員將為您迅速處理售後需求</p>
+      <p>請依步驟完成填寫，客服專員將為您處理售後需求</p>
     </div>
 
     <div class="form-card" id="formCard">
@@ -263,12 +265,12 @@
         <!-- ================= 第 1 層：基本資料與產品選擇 ================= -->
         <div class="step-content active" id="step-1">
           <div class="form-group">
-            <label>您的 LINE 名稱 / 稱呼 <span class="req">*</span></label>
-            <input type="text" id="userName" placeholder="載入中或請輸入您的 LINE 暱稱">
+            <label>LINE 名稱 <span class="req">*</span></label>
+            <input type="text" id="userName" placeholder="請輸入您的 LINE 名稱">
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
-            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話 (例: 0912345678)">
+            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話">
           </div>
 
           <div class="form-group">
@@ -289,7 +291,7 @@
           
           <div class="form-group">
             <label>請選擇或輸入您購買的產品 <span class="req">*</span></label>
-            <input type="text" id="product" list="productList" placeholder="點擊選擇或可輸入關鍵字搜尋產品...">
+            <input type="text" id="product" list="productList" placeholder="點擊右側選擇 或 輸入關鍵字搜尋產品">
             <datalist id="productList">
               <option value="洗衣粉放置架">
               <option value="廚房衛浴置物架">
