@@ -19,7 +19,7 @@
       --text-main: #2c3e50;
       --text-sub: #606f7b;
       --border-color: #e0e6ed;
-      --accent-gray: #f8faf9;
+      --input-bg: #ffffff;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
@@ -58,26 +58,32 @@
     label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #334155; }
     label .req { color: #e53e3e; margin-left: 2px; }
     
-    /* 基礎表單輸入框樣式 */
+    /* 1. 統一所有輸入框與選單的基礎外觀 */
     select, input[type="file"], input[type="text"], input[type="tel"], textarea {
       width: 100%;
-      padding: 11px 13px;
+      height: 44px;
+      padding: 10px 13px;
       font-size: 13.5px;
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      background-color: #ffffff;
+      background-color: var(--input-bg);
       color: var(--text-main);
       outline: none;
       box-sizing: border-box;
       transition: all 0.2s ease;
     }
+
+    /* 檔案選擇器特別高度設定 */
+    input[type="file"] {
+      height: auto;
+      padding: 8px 10px;
+    }
     
-    /* 1. 普通 <select> 下拉選單：徹底清除 iOS 原生外觀，手動加上自訂箭頭 */
+    /* 2. 普通 <select> 下拉選單樣式 */
     select {
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
-      background-color: #ffffff;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
@@ -85,13 +91,13 @@
       padding-right: 36px;
     }
 
-    /* 2. 產品搜尋輸入框 (#product)：不加背景箭頭，讓 iOS 原生 datalist 箭頭渲染，避免雙箭頭 */
+    /* 3. 產品搜尋輸入框 (#product) 樣式：無背景箭頭，保留原生 datalist 運作機制 */
     #product {
-      background-color: var(--accent-gray);
       padding-right: 12px;
     }
 
-    select:focus, input:focus {
+    /* 4. 統一所有欄位對焦（Focus）狀態下的顏色效果 */
+    select:focus, input:focus, textarea:focus {
       border-color: var(--primary);
       background-color: #ffffff;
       box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
@@ -104,12 +110,12 @@
       margin-top: 6px;
     }
     .card-option {
-      border: 1.5px solid var(--border-color);
+      border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 12px 8px;
       text-align: center;
       cursor: pointer;
-      background: var(--accent-gray);
+      background: #f8faf9;
       font-size: 12.5px;
       color: var(--text-main);
       transition: all 0.2s ease;
@@ -122,7 +128,7 @@
     }
 
     .photo-guide-container {
-      background-color: var(--accent-gray);
+      background-color: #f8faf9;
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 10px;
@@ -150,7 +156,7 @@
     .checkbox-item {
       display: flex;
       align-items: center;
-      background: var(--accent-gray);
+      background: #f8faf9;
       border: 1px solid var(--border-color);
       padding: 10px 12px;
       border-radius: 10px;
@@ -237,7 +243,7 @@
 
           <div class="form-group">
             <label>通路訂單編號 <span class="req">*</span></label>
-            <input type="text" id="orderId" placeholder="請輸入訂單編號 (便於專員快速核對)">
+            <input type="text" id="orderId" placeholder="請複製平台訂單編號">
           </div>
           
           <div class="form-group">
