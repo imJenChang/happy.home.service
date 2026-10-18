@@ -206,7 +206,7 @@
     .result-card p { font-size: 13.5px; color: #475569; line-height: 1.6; margin-bottom: 22px; }
     .line-btn { background-color: #06c755; color: #ffffff; font-size: 15px; }
 
-    /* ================= 品牌全螢幕質感載入遮罩樣式 ================= */
+    /* ================= 品牌專屬載入 GIF 遮罩樣式 ================= */
     #loadingOverlay {
       display: none;
       position: fixed;
@@ -214,26 +214,20 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(27, 94, 32, 0.75); /* 家而適深綠色半透明遮罩 */
-      backdrop-filter: blur(4px); /* 背景毛玻璃特效 */
+      background: rgba(27, 94, 32, 0.8); /* 品牌深綠色半透明遮罩 */
+      backdrop-filter: blur(4px);
       z-index: 9999;
       justify-content: center;
       align-items: center;
       flex-direction: column;
       color: #ffffff;
     }
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-top: 4px solid #ffffff;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-      margin-bottom: 16px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .loading-gif {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 14px;
+      background: transparent;
     }
     .loading-text {
       font-size: 15px;
@@ -250,9 +244,9 @@
   </style>
 </head>
 <body>
-  <!-- 全螢幕品牌載入動畫遮罩 -->
+  <!-- 全螢幕品牌 GIF 載入動畫遮罩 -->
   <div id="loadingOverlay">
-    <div class="spinner"></div>
+    <img src="https://github.com/imJenChang/happy.home.service/blob/main/loading.gif?raw=true" class="loading-gif" alt="載入中動畫">
     <div class="loading-text">照片上傳中，請稍候...</div>
     <div class="loading-subtext">正在為您建立專屬售後紀錄</div>
   </div>
@@ -613,7 +607,7 @@
       if (!filmImgFile) { alert("請上傳【膠片扣在架子的照片】"); return; }
       if (!storageImgFile) { alert("請上傳【收納物品如何放置照片】"); return; }
 
-      // 顯示品牌質感全螢幕載入遮罩
+      // 顯示專屬 GIF 全螢幕載入遮罩
       const loadingOverlay = document.getElementById("loadingOverlay");
       loadingOverlay.style.display = "flex";
 
