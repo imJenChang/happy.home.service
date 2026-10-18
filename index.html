@@ -54,7 +54,7 @@
     .step-content { display: none; }
     .step-content.active { display: block; }
     
-    .form-group { margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; position: relative; }
     label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #334155; }
     label .req { color: #e53e3e; margin-left: 2px; }
     
@@ -70,6 +70,8 @@
       box-sizing: border-box;
       transition: all 0.2s ease;
     }
+    
+    /* 自訂統一的下拉箭頭圖示 */
     select, #product {
       appearance: none;
       -webkit-appearance: none;
@@ -80,6 +82,17 @@
       background-size: 16px;
       padding-right: 36px;
     }
+
+    /* 專門隱藏 iOS Safari 在 <input list> 產生的原生下拉箭頭，避免雙箭頭 */
+    #product::-webkit-calendar-picker-indicator {
+      opacity: 0;
+      width: 24px;
+      height: 100%;
+      position: absolute;
+      right: 12px;
+      cursor: pointer;
+    }
+
     select:focus, input:focus {
       border-color: var(--primary);
       background-color: #fff;
@@ -110,7 +123,6 @@
       color: var(--primary-hover);
     }
 
-    /* 拍照示意圖獨立乾淨區塊 */
     .photo-guide-container {
       background-color: var(--accent-gray);
       border: 1px solid var(--border-color);
@@ -211,7 +223,7 @@
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
-            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話">
+            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話 (例: 0912345678)">
           </div>
 
           <div class="form-group">
@@ -227,7 +239,7 @@
 
           <div class="form-group">
             <label>通路訂單編號 <span class="req">*</span></label>
-            <input type="text" id="orderId" placeholder="請複製平台訂單編號">
+            <input type="text" id="orderId" placeholder="請輸入訂單編號 (便於專員快速核對)">
           </div>
           
           <div class="form-group">
@@ -414,9 +426,8 @@
   <script>
     const OFFICIAL_LINE_ID = "@988fjfvt"; 
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx35ZVnpAQ-0plN_9GOMrLrJ213BHYphEwZ-TWtmzLM_j6kkgdDaZ8c-QP8wN4F0U25OA/exec"; 
-    const LIFF_ID = "YOUR_LIFF_ID_HERE"; // 請替換為您的 LINE LIFF ID (例如: 1234567890-AbCdEfGh)
+    const LIFF_ID = "YOUR_LIFF_ID_HERE"; 
 
-    // 頁面載入時初始化 LIFF 並自動帶入 LINE 暱稱
     window.onload = function() {
       initializeLiff();
     };
