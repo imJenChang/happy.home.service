@@ -58,24 +58,26 @@
     label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #334155; }
     label .req { color: #e53e3e; margin-left: 2px; }
     
+    /* 基礎表單輸入框樣式 */
     select, input[type="file"], input[type="text"], input[type="tel"], textarea {
       width: 100%;
       padding: 11px 13px;
       font-size: 13.5px;
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      background: var(--accent-gray);
+      background-color: #ffffff;
       color: var(--text-main);
       outline: none;
       box-sizing: border-box;
       transition: all 0.2s ease;
     }
     
-    /* 下拉選單獨立樣式 */
+    /* 1. 普通 <select> 下拉選單：徹底清除 iOS 原生外觀，手動加上自訂箭頭 */
     select {
-      appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
+      appearance: none;
+      background-color: #ffffff;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
@@ -83,48 +85,15 @@
       padding-right: 36px;
     }
 
-    /* 徹底防護：外層包裹容器顯示箭頭，確保 100% 跨裝置單一箭頭 */
-    .select-input-wrapper {
-      position: relative;
-      width: 100%;
+    /* 2. 產品搜尋輸入框 (#product)：不加背景箭頭，讓 iOS 原生 datalist 箭頭渲染，避免雙箭頭 */
+    #product {
       background-color: var(--accent-gray);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      transition: all 0.2s ease;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 16px;
-    }
-
-    .select-input-wrapper:focus-within {
-      border-color: var(--primary);
-      background-color: #fff;
-      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
-    }
-
-    /* input 本身背景透明，並徹底消滅原生箭頭與自訂背景 */
-    .select-input-wrapper input {
-      border: none !important;
-      background: transparent !important;
-      padding-right: 36px !important;
-      box-shadow: none !important;
-      appearance: none !important;
-      -webkit-appearance: none !important;
-      -moz-appearance: none !important;
-    }
-
-    /* 徹底隱藏 Chrome / Safari 原生 datalist 觸發箭頭 */
-    .select-input-wrapper input::-webkit-calendar-picker-indicator {
-      display: none !important;
-      -webkit-appearance: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
+      padding-right: 12px;
     }
 
     select:focus, input:focus {
       border-color: var(--primary);
-      background-color: #fff;
+      background-color: #ffffff;
       box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
     }
 
@@ -268,15 +237,12 @@
 
           <div class="form-group">
             <label>通路訂單編號 <span class="req">*</span></label>
-            <input type="text" id="orderId" placeholder="請複製平台訂單編號">
+            <input type="text" id="orderId" placeholder="請輸入訂單編號 (便於專員快速核對)">
           </div>
           
           <div class="form-group">
             <label>請選擇或輸入您購買的產品 <span class="req">*</span></label>
-            <!-- 使用包裹容器徹底隔離系統原生箭頭 -->
-            <div class="select-input-wrapper">
-              <input type="text" id="product" list="productList" placeholder="點擊選擇或可輸入關鍵字搜尋產品...">
-            </div>
+            <input type="text" id="product" list="productList" placeholder="點擊選擇或可輸入關鍵字搜尋產品...">
             <datalist id="productList">
               <option value="洗衣粉放置架">
               <option value="廚房衛浴置物架">
