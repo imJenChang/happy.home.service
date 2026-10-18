@@ -58,7 +58,6 @@
     label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #334155; }
     label .req { color: #e53e3e; margin-left: 2px; }
     
-    /* 基礎表單輸入框樣式 */
     select, input[type="file"], input[type="text"], input[type="tel"], textarea {
       width: 100%;
       padding: 11px 13px;
@@ -72,7 +71,6 @@
       transition: all 0.2s ease;
     }
     
-    /* 1. 普通 <select> 下拉選單：徹底清除 iOS 原生外觀，手動加上灰色自訂箭頭 */
     select {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -85,7 +83,6 @@
       padding-right: 36px;
     }
 
-    /* 2. 產品搜尋輸入框 (#product)：讓 iOS 原生 datalist 箭頭渲染，避免雙箭頭 */
     #product {
       background-color: var(--accent-gray);
       padding-right: 12px;
@@ -162,7 +159,6 @@
     }
     .checkbox-item input { margin-right: 10px; accent-color: var(--primary); transform: scale(1.1); }
 
-    /* 客人上傳圖片預覽：簡潔精緻陰影外框，置中顯示 */
     .img-preview {
       max-width: 100%;
       max-height: 180px;
@@ -209,9 +205,58 @@
     .result-card h3 { margin: 0 0 8px 0; color: var(--primary); font-size: 19px; }
     .result-card p { font-size: 13.5px; color: #475569; line-height: 1.6; margin-bottom: 22px; }
     .line-btn { background-color: #06c755; color: #ffffff; font-size: 15px; }
+
+    /* ================= 品牌全螢幕質感載入遮罩樣式 ================= */
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(27, 94, 32, 0.75); /* 家而適深綠色半透明遮罩 */
+      backdrop-filter: blur(4px); /* 背景毛玻璃特效 */
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #ffffff;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid #ffffff;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .loading-subtext {
+      font-size: 12.5px;
+      color: #c8e6c9;
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
+  <!-- 全螢幕品牌載入動畫遮罩 -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">照片上傳中，請稍候...</div>
+    <div class="loading-subtext">正在為您建立專屬售後紀錄</div>
+  </div>
+
   <div class="container">
     <div class="header-card">
       <h2>家而適｜售後快查與協助</h2>
@@ -224,12 +269,12 @@
         <!-- ================= 第 1 層：基本資料與產品選擇 ================= -->
         <div class="step-content active" id="step-1">
           <div class="form-group">
-            <label>LINE 名稱 <span class="req">*</span></label>
-            <input type="text" id="userName" placeholder="請輸入您的 LINE 名稱">
+            <label>您的 LINE 名稱 / 稱呼 <span class="req">*</span></label>
+            <input type="text" id="userName" placeholder="載入中或請輸入您的 LINE 暱稱">
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
-            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話">
+            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話 (例: 0912345678)">
           </div>
 
           <div class="form-group">
@@ -423,7 +468,7 @@
     <div class="result-card" id="resultCard">
       <div class="result-icon">✅</div>
       <h3>已送出申請</h3>
-      <p>我們收到您的資料與照片，客服專員將依據您提供的資訊，於營業時間主動與您聯繫！</p>
+      <p>我們收到您的資料與照片，專員將依據您提供的資訊，於營業時間主動與您聯繫！</p>
       <a id="lineContactBtn" href="#" class="btn-link line-btn" target="_blank">💬 點此返回 LINE 通知已填單</a>
     </div>
 
@@ -511,8 +556,7 @@
       } else { preview.style.display = "none"; }
     }
 
-    /* 將 maxWidth/maxHeight 調至 600，品質調至 0.75，大幅縮小上傳體積以提升上傳速度 */
-    function fileToBase64(file, maxWidth = 600, maxHeight = 600, quality = 0.75) {
+    function fileToBase64(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
       if (!file) return Promise.resolve("");
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -531,7 +575,7 @@
             canvas.width = width; canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'medium';
+            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
             resolve(canvas.toDataURL('image/jpeg', quality));
           };
@@ -569,9 +613,12 @@
       if (!filmImgFile) { alert("請上傳【膠片扣在架子的照片】"); return; }
       if (!storageImgFile) { alert("請上傳【收納物品如何放置照片】"); return; }
 
+      // 顯示品牌質感全螢幕載入遮罩
+      const loadingOverlay = document.getElementById("loadingOverlay");
+      loadingOverlay.style.display = "flex";
+
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
-      submitBtn.innerText = "資料傳送中...";
 
       try {
         const [
@@ -607,6 +654,7 @@
         };
 
         const onComplete = function() {
+          loadingOverlay.style.display = "none"; // 隱藏遮罩
           document.getElementById("formCard").style.display = "none";
           const prefilledMsg = encodeURIComponent("專員您好，我已完成售後服務表單填寫！\n姓名/LINE：" + userName + "\n電話：" + userPhone + "\n訂單編號：" + orderId + "\n商品：" + product);
           const lineLink = "https://line.me/R/oaMessage/" + OFFICIAL_LINE_ID + "/?" + prefilledMsg;
@@ -619,9 +667,9 @@
           google.script.run
             .withSuccessHandler(onComplete)
             .withFailureHandler(function(err) {
+              loadingOverlay.style.display = "none";
               alert("送出失敗：" + err);
               submitBtn.disabled = false;
-              submitBtn.innerText = "送出申請";
             })
             .processDiagnosis(payload);
         } else if (GAS_WEB_APP_URL) {
@@ -634,18 +682,18 @@
           if (resJson.status === "success") {
             onComplete();
           } else {
+            loadingOverlay.style.display = "none";
             alert("送出失敗：" + (resJson.message || "伺服器異常"));
             submitBtn.disabled = false;
-            submitBtn.innerText = "送出申請";
           }
         } else {
           setTimeout(onComplete, 1000);
         }
 
       } catch (error) {
+        loadingOverlay.style.display = "none";
         alert("資料處理失敗，請檢查網路或照片後重試。");
         submitBtn.disabled = false;
-        submitBtn.innerText = "送出申請";
       }
     }
   </script>
