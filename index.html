@@ -2,13 +2,11 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>家而適｜售後快查與協助</title>
-  <!-- 引入 LINE LIFF SDK -->
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     :root {
       --primary: #2e7d32;
@@ -58,7 +56,7 @@
     label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #334155; }
     label .req { color: #e53e3e; margin-left: 2px; }
     
-    select, input[type="file"], input[type="text"], input[type="tel"], textarea {
+    select, input[type="file"], input[type="text"], input[type="tel"], input[type="date"], textarea {
       width: 100%;
       padding: 11px 13px;
       font-size: 13.5px;
@@ -88,7 +86,9 @@
       padding-right: 12px;
     }
 
-    select:focus, input:focus {
+    textarea { min-height: 96px; resize: vertical; font-family: inherit; line-height: 1.5; }
+
+    select:focus, input:focus, textarea:focus {
       border-color: var(--primary);
       background-color: #ffffff;
       box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
@@ -158,6 +158,32 @@
       cursor: pointer;
     }
     .checkbox-item input { margin-right: 10px; accent-color: var(--primary); transform: scale(1.1); }
+
+    .field-hint { font-size: 11.5px; color: var(--text-sub); margin-top: 4px; }
+
+    .privacy-box {
+      background: var(--accent-gray);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .privacy-box label { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0 0; font-size: 13px; color: var(--text-main); cursor: pointer; }
+    .privacy-box input { margin-top: 3px; accent-color: var(--primary); }
+
+    .case-id {
+      display: inline-block;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--primary-hover);
+      background: var(--primary-light);
+      border-radius: 8px;
+      padding: 6px 14px;
+      margin-bottom: 12px;
+    }
 
     .img-preview {
       max-width: 100%;
@@ -246,7 +272,7 @@
 <body>
   <!-- 全螢幕品牌 GIF 載入動畫遮罩 -->
   <div id="loadingOverlay">
-    <img src="https://github.com/imJenChang/happy.home.service/blob/main/loading.gif?raw=true" class="loading-gif" alt="載入中動畫">
+    <img src="loading.gif" class="loading-gif" alt="載入中動畫">
     <div class="loading-text">照片上傳中，請稍候...</div>
     <div class="loading-subtext">正在為您建立專屬售後紀錄</div>
   </div>
@@ -268,7 +294,7 @@
           </div>
           <div class="form-group">
             <label>聯絡電話 <span class="req">*</span></label>
-            <input type="tel" id="userPhone" placeholder="請輸入聯絡電話">
+            <input type="tel" id="userPhone" placeholder="例：0912345678" inputmode="tel">
           </div>
 
           <div class="form-group">
@@ -359,9 +385,22 @@
           </div>
 
           <div class="form-group">
+            <label>購買日期 <span class="req">*</span></label>
+            <input type="date" id="purchaseDate">
+            <div class="field-hint">請依訂單上的日期填寫，作為保固（購買後 1 年）判斷依據</div>
+          </div>
+
+          <div class="form-group">
             <label>截圖 購買證明（含時間及產品明細）或保固證明 <span class="req">*</span></label>
             <input type="file" id="proofImg" accept="image/*" onchange="previewImage(this, 'proofPreview')">
             <img id="proofPreview" class="img-preview">
+          </div>
+
+          <div class="form-group">
+            <div class="privacy-box">
+              為處理您的售後服務，家而適將蒐集您填寫的姓名、電話、訂單資料與照片，僅用於本次售後聯繫、補寄與退換貨作業，不會提供給無關第三方。您可隨時透過官方 LINE 要求查詢、更正或刪除您的資料。
+              <label><input type="checkbox" id="privacyAgree"> 我已閱讀並同意上述個人資料蒐集與使用說明 <span class="req">*</span></label>
+            </div>
           </div>
 
           <div class="btn-group">
@@ -373,13 +412,17 @@
         <div class="step-content" id="step-2">
           <div class="form-group">
             <label>商品異常情況 <span class="req">*</span></label>
-            <select id="issueType">
+            <select id="issueType" onchange="toggleIssueSections()">
               <option value="" disabled selected>請選擇狀況</option>
               <option value="膠片掉落">膠片掉落 / 不黏</option>
               <option value="勾盤掉落">勾盤掉落</option>
+              <option value="鐵件/不鏽鋼/垃圾桶蓋">關於鐵件、不鏽鋼、垃圾桶蓋</option>
               <option value="其他">其他商品問題</option>
             </select>
           </div>
+
+          <!-- 膠片掉落、勾盤掉落：膠片相關題目 -->
+          <div id="filmSection" style="display: none;">
 
           <div class="form-group">
             <label>安裝牆面材質 <span class="req">*</span></label>
@@ -413,7 +456,7 @@
             <label>牆面照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
               <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://github.com/imJenChang/happy.home.service/blob/main/wall.JPG?raw=true" class="photo-guide-img" alt="牆面照片示意圖">
+              <img src="wall.JPG" class="photo-guide-img" alt="牆面照片示意圖">
             </div>
             <input type="file" id="wallImg" accept="image/*" onchange="previewImage(this, 'wallPreview')">
             <img id="wallPreview" class="img-preview">
@@ -423,7 +466,7 @@
             <label>輔助膠片照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
               <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://github.com/imJenChang/happy.home.service/blob/main/helper.jpg?raw=true" class="photo-guide-img" alt="輔助膠片照片示意圖">
+              <img src="helper.jpg" class="photo-guide-img" alt="輔助膠片照片示意圖">
             </div>
             <input type="file" id="helperSheetImg" accept="image/*" onchange="previewImage(this, 'helperSheetPreview')">
             <img id="helperSheetPreview" class="img-preview">
@@ -433,7 +476,7 @@
             <label>膠片扣在架子的照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
               <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://github.com/imJenChang/happy.home.service/blob/main/hookpad.JPG?raw=true" class="photo-guide-img" alt="膠片現況照片示意圖">
+              <img src="hookpad.JPG" class="photo-guide-img" alt="膠片現況照片示意圖">
             </div>
             <input type="file" id="filmImg" accept="image/*" onchange="previewImage(this, 'filmPreview')">
             <img id="filmPreview" class="img-preview">
@@ -443,10 +486,26 @@
             <label>收納物品如何放置照片 <span class="req">*</span></label>
             <div class="photo-guide-container">
               <div class="photo-guide-title">拍照示意圖：</div>
-              <img src="https://github.com/imJenChang/happy.home.service/blob/main/storage.JPG?raw=true" class="photo-guide-img" alt="收納物品照片示意圖">
+              <img src="storage.JPG" class="photo-guide-img" alt="收納物品照片示意圖">
             </div>
             <input type="file" id="storageImg" accept="image/*" onchange="previewImage(this, 'storagePreview')">
             <img id="storagePreview" class="img-preview">
+          </div>
+          </div>
+
+          <!-- 鐵件／不鏽鋼／垃圾桶蓋、其他商品問題 -->
+          <div id="generalSection" style="display: none;">
+            <div class="form-group">
+              <label>產品照片 <span class="req">*</span></label>
+              <div class="field-hint" style="margin-bottom: 6px;">請拍出產品整體及有問題的位置</div>
+              <input type="file" id="productImg" accept="image/*" onchange="previewImage(this, 'productPreview')">
+              <img id="productPreview" class="img-preview">
+            </div>
+
+            <div class="form-group">
+              <label>現況描述 <span class="req">*</span></label>
+              <textarea id="description" placeholder="請描述發生的狀況，例如：哪個部位、何時發生、目前使用情形"></textarea>
+            </div>
           </div>
 
           <div class="btn-group">
@@ -462,6 +521,10 @@
     <div class="result-card" id="resultCard">
       <div class="result-icon">✅</div>
       <h3>已送出申請</h3>
+      <div id="caseIdBox" style="display: none;">
+        <div style="font-size: 12.5px; color: #475569; margin-bottom: 4px;">您的案件編號</div>
+        <div class="case-id" id="caseIdText"></div>
+      </div>
       <p>我們收到您的資料與照片，專員將依據您提供的資訊，於營業時間主動與您聯繫！</p>
       <a id="lineContactBtn" href="#" class="btn-link line-btn" target="_blank">💬 點此返回 LINE 通知已填單</a>
     </div>
@@ -471,34 +534,23 @@
   <script>
     const OFFICIAL_LINE_ID = "@988fjfvt"; 
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx35ZVnpAQ-0plN_9GOMrLrJ213BHYphEwZ-TWtmzLM_j6kkgdDaZ8c-QP8wN4F0U25OA/exec"; 
-    const LIFF_ID = "YOUR_LIFF_ID_HERE"; 
+
+    // 這兩類問題回答膠片相關題目，其餘類型填「產品照片＋現況描述」
+    const FILM_ISSUE_TYPES = ["膠片掉落", "勾盤掉落"];
 
     window.onload = function() {
-      initializeLiff();
+      document.getElementById("purchaseDate").max = todayStr();
     };
 
-    function initializeLiff() {
-      if (typeof liff === 'undefined') return;
-      liff.init({ liffId: LIFF_ID })
-        .then(() => {
-          if (!liff.isLoggedIn()) {
-            liff.login();
-          } else {
-            liff.getProfile()
-              .then(profile => {
-                const nameInput = document.getElementById("userName");
-                if (profile.displayName && nameInput) {
-                  nameInput.value = profile.displayName;
-                }
-              })
-              .catch(err => {
-                console.error("取得 LINE Profile 失敗", err);
-              });
-          }
-        })
-        .catch(err => {
-          console.error("LIFF 初始化失敗", err);
-        });
+    function todayStr() {
+      const d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+
+    // 手機 09xxxxxxxx、市話 0x-xxxxxxx(x)、或 +886 開頭
+    function isValidPhone(phone) {
+      const p = phone.replace(/[\s\-()]/g, "");
+      return /^09\d{8}$/.test(p) || /^0[2-8]\d{7,8}(#\d+)?$/.test(p) || /^\+8869\d{8}$/.test(p);
     }
 
     function goToStep(step) {
@@ -513,14 +565,19 @@
       const channel = document.getElementById("purchaseChannel").value;
       const orderId = document.getElementById("orderId").value.trim();
       const product = document.getElementById("product").value.trim();
+      const purchaseDate = document.getElementById("purchaseDate").value;
       const proofImg = document.getElementById("proofImg").files[0];
 
       if (!name) { alert("請填寫【LINE 名稱 / 稱呼】"); return; }
       if (!phone) { alert("請填寫【聯絡電話】"); return; }
+      if (!isValidPhone(phone)) { alert("【聯絡電話】格式不正確，請填寫手機（例：0912345678）或市話（例：02-12345678）"); return; }
       if (!channel) { alert("請選擇【購買通路】"); return; }
       if (!orderId) { alert("請填寫【通路訂單編號】"); return; }
       if (!product) { alert("請選擇或輸入【購買的產品】"); return; }
+      if (!purchaseDate) { alert("請填寫【購買日期】"); return; }
+      if (purchaseDate > todayStr()) { alert("【購買日期】不能晚於今天"); return; }
       if (!proofImg) { alert("請上傳【購買證明或保固證明】"); return; }
+      if (!document.getElementById("privacyAgree").checked) { alert("請勾選同意【個人資料蒐集與使用說明】"); return; }
 
       goToStep(2);
     }
@@ -529,6 +586,13 @@
       document.getElementById("wallType").value = val;
       document.querySelectorAll('.card-grid .card-option').forEach(el => el.classList.remove('selected'));
       document.getElementById(cardId).classList.add('selected');
+    }
+
+    function toggleIssueSections() {
+      const issueType = document.getElementById("issueType").value;
+      const isFilm = FILM_ISSUE_TYPES.indexOf(issueType) !== -1;
+      document.getElementById("filmSection").style.display = isFilm ? "block" : "none";
+      document.getElementById("generalSection").style.display = (issueType && !isFilm) ? "block" : "none";
     }
 
     function toggleHelperImage() {
@@ -550,7 +614,8 @@
       } else { preview.style.display = "none"; }
     }
 
-    function fileToBase64(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
+    // 購買證明需看清楚文字，長邊壓到 1600；其他照片 1280
+    function fileToBase64(file, maxWidth = 1280, maxHeight = 1280, quality = 0.8) {
       if (!file) return Promise.resolve("");
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -585,27 +650,38 @@
       const purchaseChannel = document.getElementById("purchaseChannel").value;
       const orderId = document.getElementById("orderId").value.trim();
       const product = document.getElementById("product").value.trim();
+      const purchaseDate = document.getElementById("purchaseDate").value;
       const issueType = document.getElementById("issueType").value;
 
       if (!issueType) { alert("請選擇【商品異常情況】"); return; }
+      const isFilm = FILM_ISSUE_TYPES.indexOf(issueType) !== -1;
 
-      const wallType = document.getElementById("wallType").value;
-      const helperSheet = document.getElementById("helperSheet").value;
-      const selectedConditions = Array.from(document.querySelectorAll('input[name="filmCondition"]:checked')).map(cb => cb.value);
+      const fileOf = id => document.getElementById(id).files[0];
+      const proofImgFile = fileOf("proofImg");
+      let wallType = "", helperSheet = "", selectedConditions = [], description = "";
+      let wallImgFile, helperSheetImgFile, filmImgFile, storageImgFile, productImgFile;
 
-      if (!helperSheet) { alert("請選擇【是否使用透明輔助膠片】"); return; }
-      if (selectedConditions.length === 0) { alert("請至少選擇一項【含掛勾的膠片情況】"); return; }
+      if (isFilm) {
+        wallType = document.getElementById("wallType").value;
+        helperSheet = document.getElementById("helperSheet").value;
+        selectedConditions = Array.from(document.querySelectorAll('input[name="filmCondition"]:checked')).map(cb => cb.value);
+        wallImgFile = fileOf("wallImg");
+        helperSheetImgFile = helperSheet === "是" ? fileOf("helperSheetImg") : undefined;
+        filmImgFile = fileOf("filmImg");
+        storageImgFile = fileOf("storageImg");
 
-      const proofImgFile = document.getElementById("proofImg").files[0];
-      const wallImgFile = document.getElementById("wallImg").files[0];
-      const helperSheetImgFile = document.getElementById("helperSheetImg").files[0];
-      const filmImgFile = document.getElementById("filmImg").files[0];
-      const storageImgFile = document.getElementById("storageImg").files[0];
-
-      if (!wallImgFile) { alert("請上傳【牆面照片】"); return; }
-      if (helperSheet === "是" && !helperSheetImgFile) { alert("請上傳【輔助膠片照片】"); return; }
-      if (!filmImgFile) { alert("請上傳【膠片扣在架子的照片】"); return; }
-      if (!storageImgFile) { alert("請上傳【收納物品如何放置照片】"); return; }
+        if (!helperSheet) { alert("請選擇【是否使用透明輔助膠片】"); return; }
+        if (selectedConditions.length === 0) { alert("請至少選擇一項【含掛勾的膠片情況】"); return; }
+        if (!wallImgFile) { alert("請上傳【牆面照片】"); return; }
+        if (helperSheet === "是" && !helperSheetImgFile) { alert("請上傳【輔助膠片照片】"); return; }
+        if (!filmImgFile) { alert("請上傳【膠片扣在架子的照片】"); return; }
+        if (!storageImgFile) { alert("請上傳【收納物品如何放置照片】"); return; }
+      } else {
+        productImgFile = fileOf("productImg");
+        description = document.getElementById("description").value.trim();
+        if (!productImgFile) { alert("請上傳【產品照片】"); return; }
+        if (!description) { alert("請填寫【現況描述】"); return; }
+      }
 
       // 顯示專屬 GIF 全螢幕載入遮罩
       const loadingOverlay = document.getElementById("loadingOverlay");
@@ -614,19 +690,27 @@
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
 
+      const fail = function(msg) {
+        loadingOverlay.style.display = "none";
+        alert(msg);
+        submitBtn.disabled = false;
+      };
+
       try {
         const [
           proofImgBase64,
           wallImgBase64,
           helperSheetImgBase64,
           filmImgBase64,
-          storageImgBase64
+          storageImgBase64,
+          productImgBase64
         ] = await Promise.all([
-          fileToBase64(proofImgFile),
+          fileToBase64(proofImgFile, 1600, 1600),
           fileToBase64(wallImgFile),
           fileToBase64(helperSheetImgFile),
           fileToBase64(filmImgFile),
-          fileToBase64(storageImgFile)
+          fileToBase64(storageImgFile),
+          fileToBase64(productImgFile)
         ]);
 
         const payload = {
@@ -636,58 +720,55 @@
           purchaseChannel,
           orderId,
           product,
+          purchaseDate,
           issueType,
           wallType,
           helperSheet,
           filmConditions: selectedConditions,
+          description,
           proofImgBase64,
           wallImgBase64,
           helperSheetImgBase64,
           filmImgBase64,
-          storageImgBase64
+          storageImgBase64,
+          productImgBase64
         };
 
-        const onComplete = function() {
-          loadingOverlay.style.display = "none"; // 隱藏遮罩
-          document.getElementById("formCard").style.display = "none";
-          const prefilledMsg = encodeURIComponent("專員您好，我已完成售後服務表單填寫！\n姓名/LINE：" + userName + "\n電話：" + userPhone + "\n訂單編號：" + orderId + "\n商品：" + product);
-          const lineLink = "https://line.me/R/oaMessage/" + OFFICIAL_LINE_ID + "/?" + prefilledMsg;
-          document.getElementById("lineContactBtn").setAttribute("href", lineLink);
-          document.getElementById("resultCard").style.display = "block";
-          window.scrollTo(0, 0);
-        };
-
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run
-            .withSuccessHandler(onComplete)
-            .withFailureHandler(function(err) {
-              loadingOverlay.style.display = "none";
-              alert("送出失敗：" + err);
-              submitBtn.disabled = false;
-            })
-            .processDiagnosis(payload);
-        } else if (GAS_WEB_APP_URL) {
+        let resJson;
+        try {
           const resp = await fetch(GAS_WEB_APP_URL, {
             method: "POST",
             body: JSON.stringify(payload),
             headers: { "Content-Type": "text/plain;charset=utf-8" }
           });
-          const resJson = await resp.json();
-          if (resJson.status === "success") {
-            onComplete();
-          } else {
-            loadingOverlay.style.display = "none";
-            alert("送出失敗：" + (resJson.message || "伺服器異常"));
-            submitBtn.disabled = false;
-          }
-        } else {
-          setTimeout(onComplete, 1000);
+          resJson = await resp.json();
+        } catch (netErr) {
+          fail("送出失敗：網路連線異常或伺服器忙碌，請稍後再試一次。");
+          return;
         }
 
-      } catch (error) {
+        if (resJson.status !== "success") {
+          fail("送出失敗：" + (resJson.message || "伺服器異常"));
+          return;
+        }
+
+        const caseId = resJson.caseId || "";
         loadingOverlay.style.display = "none";
-        alert("資料處理失敗，請檢查網路或照片後重試。");
-        submitBtn.disabled = false;
+        document.getElementById("formCard").style.display = "none";
+        if (caseId) {
+          document.getElementById("caseIdText").textContent = caseId;
+          document.getElementById("caseIdBox").style.display = "block";
+        }
+        const prefilledMsg = encodeURIComponent("專員您好，我已完成售後服務表單填寫！" +
+          (caseId ? "\n案件編號：" + caseId : "") +
+          "\n姓名/LINE：" + userName + "\n電話：" + userPhone + "\n訂單編號：" + orderId + "\n商品：" + product);
+        const lineLink = "https://line.me/R/oaMessage/" + OFFICIAL_LINE_ID + "/?" + prefilledMsg;
+        document.getElementById("lineContactBtn").setAttribute("href", lineLink);
+        document.getElementById("resultCard").style.display = "block";
+        window.scrollTo(0, 0);
+
+      } catch (error) {
+        fail("照片處理失敗，請確認上傳的是照片檔（JPG/PNG）後重試。");
       }
     }
   </script>
